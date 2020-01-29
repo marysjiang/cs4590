@@ -2,6 +2,8 @@ import controlP5.*;
 import beads.*;
 import org.jaudiolibs.beads.*;
 
+private static final int BIQUAD_FILTER = 400;
+
 ControlP5 p5;
 SamplePlayer bgm;
 SamplePlayer voice1;
@@ -9,6 +11,9 @@ SamplePlayer voice2;
 
 Gain masterGain;
 Glide masterGainGlide;
+
+BiquadFilter filter;
+Glide filterGlide;
 
 Gain bgmGain;
 Glide bgmGainGlide;
@@ -45,13 +50,17 @@ void setup() {
   bgmGainGlide = new Glide(ac, 1.0, 100);
   bgmGain = new Gain(ac, 1, bgmGainGlide);
   
+  filter = new BiquadFilter(ac, BiquadFilter.Type.HP, filterGlide, 0.8);
+  filterGlide = new Glide(ac, 1, 100);
+  
   voice1.setKillOnEnd(false);
   voice1.pause(true);
   
   voice2.setKillOnEnd(false);
   voice2.pause(true);
   
-  bgmGain.addInput(bgm);
+  filter.addInput(bgm);
+  bgmGain.addInput(filter);
   masterGain.addInput(bgmGain);
   masterGain.addInput(voice1);
   masterGain.addInput(voice2);
@@ -88,12 +97,14 @@ void Voice1(int val) {
   bgmGainGlide.setValue(0.3);
   voice2.pause(true);
   play(voice1);
+  filterGlide.setValue(BIQUAD_FILTER);
 }
 
 void Voice2(int val) {
   bgmGainGlide.setValue(0.3);
   voice1.pause(true);
   play(voice2);
+  filterGlide.setValue(BIQUAD_FILTER);
 }
 
 void play(SamplePlayer sp) {
