@@ -23,13 +23,11 @@ void setup() {
   ac = new AudioContext();
   p5 = new ControlP5(this);
   
-  // initialize sounds
   bgm = getSamplePlayer("intermission.wav");
   voice1 = getSamplePlayer("cow.wav");
   voice2 = getSamplePlayer("goat.wav");
 
-  // controls the overall gain
-  masterGainGlide = new Glide(ac, 1.0, 50);
+  masterGainGlide = new Glide(ac, 1.0, 100);
   masterGain = new Gain(ac, 1, masterGainGlide);
   
   // triggers bgm to unduck at the end of voice clips
@@ -39,6 +37,11 @@ void setup() {
       sp.pause(true);
       sp.setToLoopStart();
       bgmGainGlide.setValue(1.0);
+      if (isTalking()) {
+        filterGlide.setValue(BIQUAD_FILTER);
+      } else {
+        filterGlide.setValue(1.0);
+      }
     }
   };
   
@@ -47,11 +50,12 @@ void setup() {
   
   bgm.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
 
-  bgmGainGlide = new Glide(ac, 1.0, 100);
+  bgmGainGlide = new Glide(ac, 1.0, 300);
   bgmGain = new Gain(ac, 1, bgmGainGlide);
   
+  // initialize
   filter = new BiquadFilter(ac, BiquadFilter.Type.HP, filterGlide, 0.8);
-  filterGlide = new Glide(ac, 1, 100);
+  filterGlide = new Glide(ac, 1, 900);
   
   voice1.setKillOnEnd(false);
   voice1.pause(true);
@@ -70,15 +74,18 @@ void setup() {
     .setRange(10, 100)
     .setValue(50)
     .setPosition(50, 80)
-    .setSize(20, 100);
+    .setSize(20, 100)
+    .setLabel("Master Gain");
    
   p5.addButton("Voice1")
     .setPosition(200, 70)
-    .setSize(70, 50);
+    .setSize(70, 50)
+    .setLabel("Voice 1");
   
   p5.addButton("Voice2")
     .setPosition(200, 130)
-    .setSize(70, 50);
+    .setSize(70, 50)
+    .setLabel("Voice 2");
     
   ac.start();
 }
@@ -110,4 +117,8 @@ void Voice2(int val) {
 void play(SamplePlayer sp) {
   sp.setToLoopStart();
   sp.start();
+}
+
+boolean isTalking() {
+  return !voice1.isPaused() || !voice2.isPaused();
 }
