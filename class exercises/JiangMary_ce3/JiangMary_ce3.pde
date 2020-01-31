@@ -23,9 +23,9 @@ void setup() {
   ac = new AudioContext();
   p5 = new ControlP5(this);
   
-  bgm = getSamplePlayer("intermission.wav");
-  voice1 = getSamplePlayer("cow.wav");
-  voice2 = getSamplePlayer("goat.wav");
+  bgm = getSamplePlayer("intermission.wav"); // source material
+  voice1 = getSamplePlayer("v1.wav");
+  voice2 = getSamplePlayer("v2.wav");
 
   masterGainGlide = new Glide(ac, 1.0, 100);
   masterGain = new Gain(ac, 1, masterGainGlide);
@@ -53,9 +53,8 @@ void setup() {
   bgmGainGlide = new Glide(ac, 1.0, 300);
   bgmGain = new Gain(ac, 1, bgmGainGlide);
   
-  // initialize
-  filter = new BiquadFilter(ac, BiquadFilter.Type.HP, filterGlide, 0.8);
-  filterGlide = new Glide(ac, 1, 900);
+  filter = new BiquadFilter(ac, BiquadFilter.Type.HP, filterGlide, 0.8); // frequency as a UGen and Q as a float
+  filterGlide = new Glide(ac, 1.0, 800);
   
   voice1.setKillOnEnd(false);
   voice1.pause(true);
@@ -97,18 +96,18 @@ void draw() {
 
 void GainSlider(int val) {
   System.out.println("gain slider test");
-  masterGainGlide.setValue((int) val / 20);
+  masterGainGlide.setValue((int) val / 35);
 }
 
 void Voice1(int val) {
-  bgmGainGlide.setValue(0.3);
+  bgmGainGlide.setValue(0.2);
   voice2.pause(true);
   play(voice1);
   filterGlide.setValue(BIQUAD_FILTER);
 }
 
 void Voice2(int val) {
-  bgmGainGlide.setValue(0.3);
+  bgmGainGlide.setValue(0.2);
   voice1.pause(true);
   play(voice2);
   filterGlide.setValue(BIQUAD_FILTER);
