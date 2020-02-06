@@ -53,7 +53,7 @@ void setup() {
     public void messageReceived(Bead msg) {
       SamplePlayer sp = (SamplePlayer) msg;
       sp.setEndListener(null);
-      setPlaybackRate(0, true);
+      setPlaybackRate(0);
     }
   };
   
@@ -99,44 +99,39 @@ void draw() {
 }
 
 void Play(int val) {
-  click1.start();
-  click1.setToLoopStart();
+  play(click1);
   if (music.getPosition() < musicLength) {
-    setPlaybackRate(1, true);
+    setPlaybackRate(1);
     addEndListener();
     music.start();
   }
 }
 
 void Stop(int val) {
-  click2.start();
-  click2.setToLoopStart();
+  play(click2);
   music.pause(true);
 }
 
 void FastForward(int val) {
-  click3.start();
-  click3.setToLoopStart();
+  play(click3);
   if (music.getPosition() < musicLength) {
-    setPlaybackRate(1.4, true);
+    setPlaybackRate(1.3);
     addEndListener();
     music.start();
   }
 }
 
 void Rewind(int val) {
-  click4.start();
-  click4.setToLoopStart();
+  play(click4);
   if (music.getPosition() > 0) {
-    setPlaybackRate(-1, true);
+    setPlaybackRate(-1.3);
     addEndListener();
     music.start();
   }
 }
 
 void Reset(int val) {
-  click5.start();
-  click5.setToLoopStart();
+  play(click5);
   music.pause(true);
   music.reset();
 }
@@ -147,7 +142,7 @@ public void addEndListener() {
   }
 }
 
-public void setPlaybackRate(float rate, boolean setNow) {
+public void setPlaybackRate(float rate) {
   if (music.getPosition() >= musicLength) {
     System.out.println("end of tape");
     music.setToEnd();
@@ -156,9 +151,15 @@ public void setPlaybackRate(float rate, boolean setNow) {
     System.out.println("beginning of tape");
     music.reset();
   }
-  if (setNow) {
+  //if (setNow) {
+  //  musicRateGlide.setValue(rate);
+  //} else {
+  //  musicRateGlide.setValue(rate);
+  //}
     musicRateGlide.setValue(rate);
-  } else {
-    musicRateGlide.setValue(rate);
-  }
+}
+
+void play(SamplePlayer sp) {
+  sp.start();
+  sp.setToLoopStart();
 }
