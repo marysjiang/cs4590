@@ -1,2 +1,6 @@
+In regards to this assignment, I aimed to have cohesive UI cues that were consistent with the cassette player theme. I found sound samples of cassette player button clicking and normalized and trimmed them to create five individual sounds, which play when the buttons are clicked to simulate an actual cassette player. I chose a Walter Wanderley song, trimmed it, and made it fade in/out. When the song reaches the beginning or end, the end listener stops the song. Each button checks to see that the playback position is within bounds. If it is not, the playback position is set to the beginning or end. The button click sounds play no matter what.
+
+Sound sources:
+Walter Wanderley - Summer Samba (So Nice)
 https://freesound.org/people/Nekkowe/sounds/403247/
 https://freesound.org/people/sophiehall3535/sounds/245928/

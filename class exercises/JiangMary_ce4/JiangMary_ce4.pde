@@ -20,8 +20,8 @@ void setup() {
   ac = new AudioContext();
   p5 = new ControlP5(this);
   
-  music = getSamplePlayer("intermission.wav"); // source material
-  click1 = getSamplePlayer("click1.wav");
+  music = getSamplePlayer("summersamba2.wav"); // source material
+  click1 = getSamplePlayer("click1.wav"); // button click sounds
   click2 = getSamplePlayer("click2.wav");
   click3 = getSamplePlayer("click3.wav");
   click4 = getSamplePlayer("click4.wav");
@@ -48,7 +48,6 @@ void setup() {
   click4.pause(true);
   click5.pause(true);
 
-  // triggers bgm to unduck at the end of voice clips
   endListener = new Bead() {
     public void messageReceived(Bead msg) {
       SamplePlayer sp = (SamplePlayer) msg;
@@ -83,7 +82,7 @@ void setup() {
   p5.addButton("Rewind")
     .setPosition(110, 145)
     .setSize(100, 30)
-    .setLabel("Rewing");
+    .setLabel("Rewind");
   
   p5.addButton("Reset")
     .setPosition(110, 185)
@@ -115,7 +114,7 @@ void Stop(int val) {
 void FastForward(int val) {
   play(click3);
   if (music.getPosition() < musicLength) {
-    setPlaybackRate(1.3);
+    setPlaybackRate(1.5);
     addEndListener();
     music.start();
   }
@@ -124,7 +123,7 @@ void FastForward(int val) {
 void Rewind(int val) {
   play(click4);
   if (music.getPosition() > 0) {
-    setPlaybackRate(-1.3);
+    setPlaybackRate(-1.5);
     addEndListener();
     music.start();
   }
@@ -151,12 +150,8 @@ public void setPlaybackRate(float rate) {
     System.out.println("beginning of tape");
     music.reset();
   }
-  //if (setNow) {
-  //  musicRateGlide.setValue(rate);
-  //} else {
-  //  musicRateGlide.setValue(rate);
-  //}
-    musicRateGlide.setValue(rate);
+  
+  musicRateGlide.setValue(rate);
 }
 
 void play(SamplePlayer sp) {
