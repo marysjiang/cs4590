@@ -1,8 +1,0 @@
-FreeSound Source URL: https://freesound.org/people/Benboncan/sounds/58277/
-
-
-
---
-
-If you use a custom UGen (Unit Generator) for your exercise, describe it below:
-I used the Reverb UGen to add a reverb effect to the sound. The reverb is modified by adjusting the late reverb level on the slider, which controls how much the sound reverberates at the end. This value is divided by 20 to adjust for the slider range since the late reflections level is supposed to be between 0 and 1. I created a gain glide to control the gain. When the gain slider is used, the gain glide value is divided by 20 to account for range, which then increases or decreases the gain. The play button plays the sound and will replay it if the button is pressed.
