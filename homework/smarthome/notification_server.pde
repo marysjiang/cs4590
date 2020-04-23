@@ -65,6 +65,9 @@ class NotificationServer {
     }
   }
   
+  public void clearListeners() {
+    listeners.clear();
+  }
 
   class NotificationTask extends TimerTask {
     

@@ -48,9 +48,7 @@ class DinnerAtHomeFilter extends Context {
     if (notif.getPriorityLevel() == 1) {
       notif.ttsText = notif.getTag() + " has an error " + notif.getNote();
       queue.add(notif);
-    }
-    
-    if (notif.getPriorityLevel() == 2) {
+    } else if (notif.getPriorityLevel() == 2) {
       notif.soundFile = getSamplePlayer("stove.wav");
       queue.add(notif);
     }
@@ -59,70 +57,125 @@ class DinnerAtHomeFilter extends Context {
   }
   
   public void filterDoor(Notification notif) {
-    if (notif.getPriorityLevel() <= 2) {
+    if (notif.getPriorityLevel() >= 2) {
       notif.soundFile = getSamplePlayer("door.wav");
-      notif.ttsText = "Delivery for " + notif.getTag();
       queue.add(notif);
     }
     
-    println("queue " + queue);
+    //println("queue " + queue);
   }
   
   public void filterDelivery(Notification notif) {
-    notif.soundFile = getSamplePlayer("doorbell.wav");
-    queue.add(notif);
+    if (notif.getPriorityLevel() == 1) {
+      notif.soundFile = getSamplePlayer("doorbell.wav");
+      //notif.ttsText = "Delivery for " + notif.getTag();
+      queue.add(notif);
+    }
     
-    println("queue " + queue);
+    //println("queue " + queue);
   }
 }
 
 class ParentNightOutFilter extends Context {
   public void filterMessage(Notification notif) {
-    if (notif.getPriorityLevel() <= 2) {
+    if (notif.getPriorityLevel() == 1) {
+      notif.ttsText = "Message to " + notif.getTag() + notif.getNote();
+      queue.add(notif);
+    } else if (notif.getPriorityLevel() <= 2) {
+      notif.soundFile = getSamplePlayer("message.wav");
       queue.add(notif);
     }
   }
   
   public void filterApplianceStateChange(Notification notif) {
+    if (notif.getPriorityLevel() == 1) {
+      notif.ttsText = notif.getTag() + " has an error " + notif.getNote();
+      queue.add(notif);
+    } else if (notif.getPriorityLevel() <= 2) {
+      notif.soundFile = getSamplePlayer("stove.wav");
+      queue.add(notif);
+    }
   }
   
   public void filterDoor(Notification notif) {
+    if (notif.getPriorityLevel() <= 1) {
+      notif.soundFile = getSamplePlayer("door.wav");
+      queue.add(notif);
+    }
   }
   
   public void filterDelivery(Notification notif) {
+    if (notif.getPriorityLevel() == 1) {
+      notif.soundFile = getSamplePlayer("doorbell.wav");
+      //notif.ttsText = "Package at the " + notif.getLocation();
+      queue.add(notif);
+    }
   }
 }
 
 class PartyFilter extends Context {
   public void filterMessage(Notification notif) {
-    if (notif.getPriorityLevel() <= 2) {
-      ttsExamplePlayback("hello");
+    if (notif.getPriorityLevel() <= 1) {
+      notif.ttsText = "Message received";
     }
   }
   
   public void filterApplianceStateChange(Notification notif) {
+    if (notif.getPriorityLevel() == 1) {
+      notif.ttsText = notif.getTag() + " has an error " + notif.getNote();
+      queue.add(notif);
+    }
   }
   
   public void filterDoor(Notification notif) {
+    if (notif.getPriorityLevel() <= 1) {
+      notif.soundFile = getSamplePlayer("door.wav");
+      queue.add(notif);
+    }
   }
   
   public void filterDelivery(Notification notif) {
+    if (notif.getPriorityLevel() == 1) {
+      notif.soundFile = getSamplePlayer("doorbell.wav");
+      //notif.ttsText = "Delivery at the " + notif.getLocation();
+      queue.add(notif);
+    }
   }
 }
 
 class WorkAtHomeFilter extends Context {
   public void filterMessage(Notification notif) {
-    if (notif.getPriorityLevel() <= 2) {
-      ttsExamplePlayback("hello");
+    if (notif.getPriorityLevel() == 1) {
+      notif.ttsText = "Message to " + notif.getTag() + notif.getNote();
+      queue.add(notif);
+    } else if (notif.getPriorityLevel() <= 2) {
+      notif.soundFile = getSamplePlayer("message.wav");
+      queue.add(notif);
     }
   }
   
   public void filterApplianceStateChange(Notification notif) {
+    if (notif.getPriorityLevel() == 1) {
+      notif.ttsText = notif.getTag() + " has an error " + notif.getNote();
+      queue.add(notif);
+    } else if (notif.getPriorityLevel() == 2) {
+      notif.soundFile = getSamplePlayer("stove.wav");
+      queue.add(notif);
+    }
   }
   
   public void filterDoor(Notification notif) {
+    if (notif.getPriorityLevel() <= 1) {
+      notif.soundFile = getSamplePlayer("door.wav");
+      queue.add(notif);
+    }
   }
   
   public void filterDelivery(Notification notif) {
+    if (notif.getPriorityLevel() == 1) {
+      notif.soundFile = getSamplePlayer("doorbell.wav");
+      //notif.ttsText = "Delivery at the " + notif.getLocation();
+      queue.add(notif);
+    }
   }
 }

@@ -20,7 +20,7 @@ TextToSpeechMaker ttsMaker;
 //name of a file to load from the data directory
 String eventDataJSON1 = "smarthome_dinner_at_home.json";
 String eventDataJSON2 = "smarthome_parent_night_out.json";
-String eventDataJSON3 = "smarthome_party.son";
+String eventDataJSON3 = "smarthome_party.json";
 String eventDataJSON4 = "smarthome_work_at_home.json";
 
 ControlP5 p5;
@@ -354,18 +354,33 @@ void setup() {
 void draw() {
   //this method must be present (even if empty) to process events such as keyPressed()  
   background(1);
-  
+    
   while (!queue.isEmpty()) {
     notification = queue.poll();
-    
+    println("DEQUEUED ------ " + notification + " TYPE ------- " + notification.getType());
+    Notification head = queue.peek();
+
     // sonify
-    if (notification != null) {
-      if (notification.ttsText != null) {
-        ttsExamplePlayback(notification.ttsText);
-      } else {
-        ac.out.addInput(notification.soundFile);
-        notification.soundFile.setKillOnEnd(false);
-        play(notification.soundFile);
+    if (notification == head) {
+      if (notification != null) {
+        if (notification.ttsText != null) {
+          ttsExamplePlayback(notification.ttsText);
+        } else {
+          try {
+            Thread.sleep(4000);
+          } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+          }
+          //while (isPlaying(notification.soundFile)) {
+          //  try {
+          //    Thread.sleep(4000);
+          //  } catch (InterruptedException e) {
+          //    Thread.currentThread().interrupt();
+          //  }
+          //}
+          ac.out.addInput(notification.soundFile);
+          play(notification.soundFile);
+        }
       }
     }
   }
@@ -376,7 +391,7 @@ void update(int val) {
   String[] locations = new String[]{"Kitchen", "Living Room", "Family Room", "Utility Room", "Garage",
     "Front Porch", "Back Porch", "Master Bath", "Guest Bath", "Master Bedroom", "Kids Bedroom", "Guest Bedroom" };
   
-  // sorry for the ugly code
+  // I'm sorry for the ugly code
   String updatedLocations = "Spouse 1 " + locations[(int) spouse1.getValue()] + " Spouse 2 " + locations[(int) spouse2.getValue()]
     + " Kid 1 " + locations[(int) kid1.getValue()] + " Kid 2 " + locations[(int) kid2.getValue()] + " Housekeeper "
     + locations[(int) housekeeper.getValue()] + " Babysitter " + locations[(int) babysitter.getValue()] + " Guest "
@@ -395,26 +410,29 @@ void context(int val) {
   // retrieve context type for notification filtering
   
   if (val == 0) {
+    keyPressed(eventDataJSON1);
     contextType = new DinnerAtHomeFilter();
   } else if (val == 1) {
+    keyPressed(eventDataJSON2);
     contextType = new ParentNightOutFilter();
   } else if (val == 2) {
+    keyPressed(eventDataJSON3);
     contextType = new PartyFilter();
   } else {
+    keyPressed(eventDataJSON4);
     contextType = new WorkAtHomeFilter();
   }
   
-  println("filter selected " + contextType);
+  //println("filter selected " + contextType);
 }
 
-void keyPressed() {
+void keyPressed(String eventData) {
   //example of stopping the current event stream and loading the second one
-  if (key == RETURN || key == ENTER) {
+  //if (key == RETURN || key == ENTER) {
     server.stopEventStream(); //always call this before loading a new stream
-    server.loadEventStream(eventDataJSON2);
-    println("**** New event stream loaded: " + eventDataJSON2 + " ****");
-  }
-    
+    server.loadEventStream(eventData);
+    println("**** New event stream loaded: " + eventData + " ****");
+  //}
 }
 
 //in your own custom class, you will implement the NotificationListener interface 
