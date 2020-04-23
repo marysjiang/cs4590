@@ -41,10 +41,15 @@ ScrollableList tvRemote;
 ScrollableList cat;
 ScrollableList dog;
 
+SamplePlayer catSound;
+
 Button update;
 
 NotificationServer server;
 ArrayList<Notification> notifications;
+
+PriorityQueue<Notification> queue;
+Notification notification;
 
 Example example;
 
@@ -55,27 +60,25 @@ void setup() {
   ac.start();
   
   size(800, 500);
-   
-  Map<String, Integer> rooms = new HashMap<String, Integer>();
-  rooms.put("Kitchen", 1);
-  rooms.put("Living Room", 2);
-  rooms.put("Family Room", 3);
-  rooms.put("Utility Room", 4);
-  rooms.put("Garage", 5);
-  rooms.put("Front Porch", 6);
-  rooms.put("Back Porch", 7);
-  rooms.put("Master Bath", 8);
-  rooms.put("Guest Bath", 9);
-  rooms.put("Master Bedroom", 10);
-  rooms.put("Kids Bedroom", 11);
-  rooms.put("Guest Bedroom", 12);
+  
+  Comparator<Notification> priorityComp = new Comparator<Notification>() {
+    public int compare(Notification n1, Notification n2) {
+      return min(n1.getPriorityLevel(), n2.getPriorityLevel());
+    }
+  };
+  
+  queue = new PriorityQueue<Notification>(15, priorityComp);
+  
+  catSound = getSamplePlayer("cat.wav");
+  //catSound.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
+  catSound.setKillOnEnd(false);
+  catSound.pause(true);
  
   spouse1 = p5.addScrollableList("spouse1")
     .setPosition(5, 5)
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -95,7 +98,6 @@ void setup() {
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -115,7 +117,6 @@ void setup() {
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -135,7 +136,6 @@ void setup() {
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -155,7 +155,6 @@ void setup() {
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -175,7 +174,6 @@ void setup() {
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -195,7 +193,6 @@ void setup() {
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -215,7 +212,6 @@ void setup() {
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -235,7 +231,6 @@ void setup() {
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -255,7 +250,6 @@ void setup() {
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -275,7 +269,6 @@ void setup() {
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -295,7 +288,6 @@ void setup() {
     .setSize(120, 160)
     .setColorForeground(color(220))
     .setColorActive(color(120))
-    .setOpen(true)
     .setType(ScrollableList.LIST)
     .addItem("Kitchen", 0)
     .addItem("Living Room", 1)
@@ -334,7 +326,7 @@ void setup() {
   //which you will then need to hook up to SamplePlayer Beads
   ttsMaker = new TextToSpeechMaker();
   
-  String exampleSpeech = "Text to speech is okay, I guess.";
+  String exampleSpeech = "pee poo pee poo";
   
   ttsExamplePlayback(exampleSpeech); //see ttsExamplePlayback below for usage
   
@@ -357,6 +349,34 @@ void draw() {
   background(1);
 }
 
+void update(int val) {
+  String[] locations = new String[]{"Kitchen", "Living Room", "Family Room", "Utility Room", "Garage",
+    "Front Porch", "Back Porch", "Master Bath", "Guest Bath", "Master Bedroom", "Kids Bedroom", "Guest Bedroom" };
+  
+  // sorry for the ugly code
+  String updatedLocations = "Spouse 1 " + locations[(int) spouse1.getValue()] + " Spouse 2 " + locations[(int) spouse2.getValue()]
+    + " Kid 1 " + locations[(int) kid1.getValue()] + " Kid 2 " + locations[(int) kid2.getValue()] + " Housekeeper "
+    + locations[(int) housekeeper.getValue()] + " Babysitter " + locations[(int) babysitter.getValue()] + " Guest "
+    + locations[(int) guest.getValue()] + " Car Keys " + locations[(int) carKeys.getValue()] + " Mobile phone "
+    + locations[(int) mobilePhone.getValue()] + " TV Remote " + locations[(int) tvRemote.getValue()] + " Cat "
+    + locations[(int) cat.getValue()] + " Dog " + locations[(int) dog.getValue()];
+    
+  println(updatedLocations);
+  ttsExamplePlayback(updatedLocations);
+  //play(catSound);
+  //ttsExamplePlayback(locations[(int) dog.getValue()]);
+}
+
+void context(int val) {
+  // retrive context type for notification filtering
+  ContextManager contextManager = getContext(val);
+}
+
+void play(SamplePlayer sp) {
+  sp.setToLoopStart();
+  sp.start();
+}
+
 void keyPressed() {
   //example of stopping the current event stream and loading the second one
   if (key == RETURN || key == ENTER) {
@@ -371,6 +391,7 @@ void keyPressed() {
 //(with the notificationReceived() method) to receive Notification events as they come in
 class Example implements NotificationListener {
   
+  
   public Example() {
     //setup here
   }
@@ -379,6 +400,12 @@ class Example implements NotificationListener {
   public void notificationReceived(Notification notification) { 
     println("<Example> " + notification.getType().toString() + " notification received at " 
     + Integer.toString(notification.getTimestamp()) + " ms");
+    
+    // filter notifications by context
+    
+    
+    
+    
     
     String debugOutput = ">>> ";
     switch (notification.getType()) {

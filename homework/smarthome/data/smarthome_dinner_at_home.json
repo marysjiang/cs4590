@@ -10,7 +10,7 @@
   },
   {
     "type": "PersonMove",
-    "timestamp": 200,
+    "timestamp": 250,
     "location": "kitchen",
     "tag": "spouse_1",
     "flag": "on",

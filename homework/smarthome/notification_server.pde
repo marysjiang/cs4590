@@ -22,7 +22,7 @@ class NotificationServer {
   //you should register all listeners before calling this method
   public void loadEventStream(String eventDataJSON) {
     currentNotifications = this.getNotificationDataFromJSON(loadJSONArray(eventDataJSON));
-    
+        
     //Starting the NotificationServer (scheduling tasks) 
     for (int i = 0; i < currentNotifications.size(); i++) { //<>//
       this.scheduleTask(currentNotifications.get(i));
@@ -83,3 +83,6 @@ class NotificationServer {
     
   }
 }
+
+// grab from notif_server
+// notif_server -> filter

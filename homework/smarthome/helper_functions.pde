@@ -24,3 +24,6 @@ SamplePlayer getSamplePlayer(String fileName, Boolean killOnEnd) {
 SamplePlayer getSamplePlayer(String fileName) {
   return getSamplePlayer(fileName, false);
 }
+
+//public enum Context {
+  
