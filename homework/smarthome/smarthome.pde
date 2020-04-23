@@ -72,13 +72,18 @@ void setup() {
   
   queue = new PriorityQueue<Notification>(15, priorityComp);
   
-  catSound = getSamplePlayer("cat.wav");
-  //catSound.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
-  catSound.setKillOnEnd(false);
-  catSound.pause(true);
-  
+  // initialize contextType
   contextType = new DinnerAtHomeFilter();
- 
+  
+  // create endListener
+  endListener = new Bead() {
+    public void messageReceived(Bead msg) {
+      SamplePlayer sp = (SamplePlayer) msg;
+      sp.pause(true);
+      sp.setEndListener(null);
+    }
+  };
+  
   spouse1 = p5.addScrollableList("spouse1")
     .setPosition(5, 5)
     .setSize(120, 160)
@@ -331,11 +336,7 @@ void setup() {
   //this will create WAV files in your data directory from input speech 
   //which you will then need to hook up to SamplePlayer Beads
   ttsMaker = new TextToSpeechMaker();
-  
-  String exampleSpeech = "pee poo pee poo";
-  
-  ttsExamplePlayback(exampleSpeech); //see ttsExamplePlayback below for usage
-  
+      
   //START NotificationServer setup
   server = new NotificationServer();
   
@@ -354,12 +355,23 @@ void draw() {
   //this method must be present (even if empty) to process events such as keyPressed()  
   background(1);
   
-  //notification = queue.poll();
-  //if (notification != null) {
-  //  // sonify
-  //}
+  while (!queue.isEmpty()) {
+    notification = queue.poll();
+    
+    // sonify
+    if (notification != null) {
+      if (notification.ttsText != null) {
+        ttsExamplePlayback(notification.ttsText);
+      } else {
+        ac.out.addInput(notification.soundFile);
+        notification.soundFile.setKillOnEnd(false);
+        play(notification.soundFile);
+      }
+    }
+  }
 }
 
+// update locations
 void update(int val) {
   String[] locations = new String[]{"Kitchen", "Living Room", "Family Room", "Utility Room", "Garage",
     "Front Porch", "Back Porch", "Master Bath", "Guest Bath", "Master Bedroom", "Kids Bedroom", "Guest Bedroom" };
@@ -378,6 +390,7 @@ void update(int val) {
   //ttsExamplePlayback(locations[(int) dog.getValue()]);
 }
 
+// change context
 void context(int val) {
   // retrieve context type for notification filtering
   
@@ -394,11 +407,6 @@ void context(int val) {
   println("filter selected " + contextType);
 }
 
-void play(SamplePlayer sp) {
-  sp.setToLoopStart();
-  sp.start();
-}
-
 void keyPressed() {
   //example of stopping the current event stream and loading the second one
   if (key == RETURN || key == ENTER) {
@@ -413,9 +421,9 @@ void keyPressed() {
 //(with the notificationReceived() method) to receive Notification events as they come in
 class Example implements NotificationListener {
   
-  
   public Example() {
     //setup here
+    
   }
   
   //this method must be implemented to receive notifications

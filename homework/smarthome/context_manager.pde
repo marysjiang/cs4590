@@ -1,5 +1,8 @@
 import java.util.*;
 
+double soundLength;
+Bead endListener;
+
 abstract class Context {
   public abstract void filterMessage(Notification notif);
   public abstract void filterApplianceStateChange(Notification notif);
@@ -30,25 +33,53 @@ abstract class Context {
 
 class DinnerAtHomeFilter extends Context {
   public void filterMessage(Notification notif) {
-    if (notif.getPriorityLevel() <= 2) {
-      ttsExamplePlayback("hello");
+    if (notif.getPriorityLevel() == 1) {
+      notif.ttsText = "Message to " + notif.getTag() + notif.getNote();
+      queue.add(notif);
+    } else if (notif.getPriorityLevel() == 2) {
+      notif.soundFile = getSamplePlayer("message.wav");
+      queue.add(notif);
     }
+    
+    //println("queue " + queue);
   }
   
   public void filterApplianceStateChange(Notification notif) {
+    if (notif.getPriorityLevel() == 1) {
+      notif.ttsText = notif.getTag() + " has an error " + notif.getNote();
+      queue.add(notif);
+    }
+    
+    if (notif.getPriorityLevel() == 2) {
+      notif.soundFile = getSamplePlayer("stove.wav");
+      queue.add(notif);
+    }
+    
+    //println("queue " + queue);
   }
   
   public void filterDoor(Notification notif) {
+    if (notif.getPriorityLevel() <= 2) {
+      notif.soundFile = getSamplePlayer("door.wav");
+      notif.ttsText = "Delivery for " + notif.getTag();
+      queue.add(notif);
+    }
+    
+    println("queue " + queue);
   }
   
   public void filterDelivery(Notification notif) {
+    notif.soundFile = getSamplePlayer("doorbell.wav");
+    queue.add(notif);
+    
+    println("queue " + queue);
   }
 }
 
 class ParentNightOutFilter extends Context {
   public void filterMessage(Notification notif) {
     if (notif.getPriorityLevel() <= 2) {
-      ttsExamplePlayback("hello");
+      queue.add(notif);
     }
   }
   
