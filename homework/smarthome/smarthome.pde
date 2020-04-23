@@ -24,6 +24,7 @@ String eventDataJSON3 = "smarthome_party.json";
 String eventDataJSON4 = "smarthome_work_at_home.json";
 
 SamplePlayer dinnerSound;
+SamplePlayer notifPlayer;
 
 ControlP5 p5;
 
@@ -361,13 +362,16 @@ void draw() {
   //this method must be present (even if empty) to process events such as keyPressed()  
   background(1);
     
-  while (!queue.isEmpty()) {
+  SamplePlayer notifPlayer = null;
+  
+  if (!queue.isEmpty()) {
     notification = queue.poll();
-    println("DEQUEUED ------ " + notification + " TYPE ------- " + notification.getType());
+    //println("DEQUEUED ------ " + notification + " TYPE ------- " + notification.getType());
+    
     Notification head = queue.peek();
 
     // sonify
-    if (notification == head) {
+    //if (notification == head) {
       if (notification != null) {
         if (notification.ttsText != null) {
           ttsExamplePlayback(notification.ttsText);
@@ -385,10 +389,11 @@ void draw() {
           //  }
           //}
           ac.out.addInput(notification.soundFile);
+          //notifPlayer = notification.soundFile;
           play(notification.soundFile);
         }
       }
-    }
+    //}
   }
 }
 

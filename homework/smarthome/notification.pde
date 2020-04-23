@@ -9,7 +9,7 @@ class Notification {
   String tag;
   String flag;
   int priority;
-  SamplePlayer soundFile;
+  SamplePlayer soundFile; // change to string
   String ttsText;
   
   public Notification(JSONObject json) {
