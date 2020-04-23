@@ -1,41 +1,97 @@
 import java.util.*;
 
-ContextManager DINNER_AT_HOME = new DinnerAtHomeManager();
-ContextManager PARENT_NIGHT_OUT = new ParentNightOutManager();
-ContextManager PARTY = new PartyManager();
-ContextManager WORK_AT_HOME = new WorkAtHomeManager();
+abstract class Context {
+  public abstract void filterMessage(Notification notif);
+  public abstract void filterApplianceStateChange(Notification notif);
+  public abstract void filterDoor(Notification notif);
+  public abstract void filterDelivery(Notification notif);
   
-ContextManager getContext(int type) {
-  switch (type) {
-    case 0:
-      return DINNER_AT_HOME;
-    case 1:
-      return PARENT_NIGHT_OUT;
-    case 2:
-      return PARTY;
-    case 3:
-      return WORK_AT_HOME;
-    default:
-      throw new RuntimeException("Unavailable");
+  public void filterNotification(Notification notif) {
+    NotificationType type = notif.getType();
+    
+    switch (type) {
+      case Door:
+        println("door type");
+        filterDoor(notif);
+      case ApplianceStateChange:
+        println("appliance type");
+        filterApplianceStateChange(notif);
+      case Message:
+        println("message type");
+        filterMessage(notif);
+      case PackageDelivery:
+        println("package delivery type");
+        filterDelivery(notif);
+      default:
+        break;
+    }
   }
 }
 
-abstract class ContextManager {
-  public abstract SamplePlayer filterMessage(Notification notif);
-  public abstract SamplePlayer filterApplianceStateChange(Notification notif);
-  public abstract SamplePlayer filterDoor(Notification notif);
-  public abstract SamplePlayer filterDelivery(Notification notif);
+class DinnerAtHomeFilter extends Context {
+  public void filterMessage(Notification notif) {
+    if (notif.getPriorityLevel() <= 2) {
+      ttsExamplePlayback("hello");
+    }
+  }
   
+  public void filterApplianceStateChange(Notification notif) {
+  }
+  
+  public void filterDoor(Notification notif) {
+  }
+  
+  public void filterDelivery(Notification notif) {
+  }
 }
 
-class DinnerAtHomeManager extends ContextManager {
+class ParentNightOutFilter extends Context {
+  public void filterMessage(Notification notif) {
+    if (notif.getPriorityLevel() <= 2) {
+      ttsExamplePlayback("hello");
+    }
+  }
+  
+  public void filterApplianceStateChange(Notification notif) {
+  }
+  
+  public void filterDoor(Notification notif) {
+  }
+  
+  public void filterDelivery(Notification notif) {
+  }
 }
 
-class ParentNightOutManager extends ContextManager {
+class PartyFilter extends Context {
+  public void filterMessage(Notification notif) {
+    if (notif.getPriorityLevel() <= 2) {
+      ttsExamplePlayback("hello");
+    }
+  }
+  
+  public void filterApplianceStateChange(Notification notif) {
+  }
+  
+  public void filterDoor(Notification notif) {
+  }
+  
+  public void filterDelivery(Notification notif) {
+  }
 }
 
-class PartyManager extends ContextManager {
-}
-
-class WorkAtHomeManager extends ContextManager {
+class WorkAtHomeFilter extends Context {
+  public void filterMessage(Notification notif) {
+    if (notif.getPriorityLevel() <= 2) {
+      ttsExamplePlayback("hello");
+    }
+  }
+  
+  public void filterApplianceStateChange(Notification notif) {
+  }
+  
+  public void filterDoor(Notification notif) {
+  }
+  
+  public void filterDelivery(Notification notif) {
+  }
 }

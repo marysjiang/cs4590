@@ -9,6 +9,7 @@ class Notification {
   String tag;
   String flag;
   int priority;
+  SamplePlayer sp;
   
   public Notification(JSONObject json) {
     this.timestamp = json.getInt("timestamp");
@@ -63,6 +64,7 @@ class Notification {
   public String getTag() { return tag; }
   public String getFlag() { return flag; }
   public int getPriorityLevel() { return priority; }
+  public SamplePlayer getSamplePlayer() { return sp; }
   
   public String toString() {
       String output = getType().toString() + ": ";

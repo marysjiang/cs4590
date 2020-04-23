@@ -26,6 +26,7 @@ String eventDataJSON4 = "smarthome_work_at_home.json";
 ControlP5 p5;
 
 RadioButton context;
+//String contextType;
 
 ScrollableList spouse1;
 ScrollableList spouse2;
@@ -47,6 +48,8 @@ Button update;
 
 NotificationServer server;
 ArrayList<Notification> notifications;
+
+Context contextType;
 
 PriorityQueue<Notification> queue;
 Notification notification;
@@ -73,6 +76,8 @@ void setup() {
   //catSound.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
   catSound.setKillOnEnd(false);
   catSound.pause(true);
+  
+  contextType = new DinnerAtHomeFilter();
  
   spouse1 = p5.addScrollableList("spouse1")
     .setPosition(5, 5)
@@ -313,7 +318,8 @@ void setup() {
     .addItem("Family Dinner", 0)
     .addItem("Parent Night Out", 1)
     .addItem("Party", 2)
-    .addItem("Work at Home", 3);
+    .addItem("Work at Home", 3)
+    .activate(0);
   
   update = p5.addButton("update")
     .setPosition(620, 390)
@@ -347,6 +353,11 @@ void setup() {
 void draw() {
   //this method must be present (even if empty) to process events such as keyPressed()  
   background(1);
+  
+  //notification = queue.poll();
+  //if (notification != null) {
+  //  // sonify
+  //}
 }
 
 void update(int val) {
@@ -368,8 +379,19 @@ void update(int val) {
 }
 
 void context(int val) {
-  // retrive context type for notification filtering
-  ContextManager contextManager = getContext(val);
+  // retrieve context type for notification filtering
+  
+  if (val == 0) {
+    contextType = new DinnerAtHomeFilter();
+  } else if (val == 1) {
+    contextType = new ParentNightOutFilter();
+  } else if (val == 2) {
+    contextType = new PartyFilter();
+  } else {
+    contextType = new WorkAtHomeFilter();
+  }
+  
+  println("filter selected " + contextType);
 }
 
 void play(SamplePlayer sp) {
@@ -402,10 +424,8 @@ class Example implements NotificationListener {
     + Integer.toString(notification.getTimestamp()) + " ms");
     
     // filter notifications by context
-    
-    
-    
-    
+    contextType.filterNotification(notification);
+    //println("the context type is " + contextType);
     
     String debugOutput = ">>> ";
     switch (notification.getType()) {
