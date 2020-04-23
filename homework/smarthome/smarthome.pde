@@ -23,6 +23,8 @@ String eventDataJSON2 = "smarthome_parent_night_out.json";
 String eventDataJSON3 = "smarthome_party.json";
 String eventDataJSON4 = "smarthome_work_at_home.json";
 
+SamplePlayer dinnerSound;
+
 ControlP5 p5;
 
 RadioButton context;
@@ -70,6 +72,7 @@ void setup() {
     }
   };
   
+  // initialize priority queue
   queue = new PriorityQueue<Notification>(15, priorityComp);
   
   // initialize contextType
@@ -83,6 +86,9 @@ void setup() {
       sp.setEndListener(null);
     }
   };
+  
+  dinnerSound = getSamplePlayer("dinner.wav");
+  ac.out.addInput(dinnerSound);
   
   spouse1 = p5.addScrollableList("spouse1")
     .setPosition(5, 5)
@@ -412,15 +418,19 @@ void context(int val) {
   if (val == 0) {
     keyPressed(eventDataJSON1);
     contextType = new DinnerAtHomeFilter();
+    play(dinnerSound);
   } else if (val == 1) {
     keyPressed(eventDataJSON2);
     contextType = new ParentNightOutFilter();
+    dinnerSound.pause(true);
   } else if (val == 2) {
     keyPressed(eventDataJSON3);
     contextType = new PartyFilter();
+    dinnerSound.pause(true);
   } else {
     keyPressed(eventDataJSON4);
     contextType = new WorkAtHomeFilter();
+    dinnerSound.pause(true);
   }
   
   //println("filter selected " + contextType);
