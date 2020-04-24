@@ -27,6 +27,7 @@ SamplePlayer getSamplePlayer(String fileName) {
 
 public void addEndListener(SamplePlayer sp) {
   if (sp.getEndListener() == null) {
+    println("==== END LISTENER ATTACHED ====" + sp);
     sp.setEndListener(endListener);
   }
 }
@@ -34,7 +35,6 @@ public void addEndListener(SamplePlayer sp) {
 public void play(SamplePlayer sp) {
   sp.setToLoopStart();
   if (sp.getPosition() < sp.getSample().getLength()) {
-    addEndListener(sp);
     sp.start();
   }
 }

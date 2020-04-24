@@ -24,7 +24,7 @@ String eventDataJSON3 = "smarthome_party.json";
 String eventDataJSON4 = "smarthome_work_at_home.json";
 
 SamplePlayer dinnerSound;
-SamplePlayer notifPlayer;
+SamplePlayer sp;
 
 ControlP5 p5;
 
@@ -44,8 +44,6 @@ ScrollableList mobilePhone;
 ScrollableList tvRemote;
 ScrollableList cat;
 ScrollableList dog;
-
-SamplePlayer catSound;
 
 Button update;
 
@@ -85,8 +83,12 @@ void setup() {
       SamplePlayer sp = (SamplePlayer) msg;
       sp.pause(true);
       sp.setEndListener(null);
+      //sp = null;
+      println("=== END LISTENER DESTROYED ===");
     }
   };
+  
+  sp = new SamplePlayer(ac, 0);
   
   dinnerSound = getSamplePlayer("dinner.wav");
   ac.out.addInput(dinnerSound);
@@ -361,39 +363,33 @@ void setup() {
 void draw() {
   //this method must be present (even if empty) to process events such as keyPressed()  
   background(1);
-    
-  SamplePlayer notifPlayer = null;
+  
+  //SamplePlayer notifPlayer = null;
   
   if (!queue.isEmpty()) {
     notification = queue.poll();
-    //println("DEQUEUED ------ " + notification + " TYPE ------- " + notification.getType());
     
-    Notification head = queue.peek();
+    println("DEQUEUED === " + notification + " TYPE === " + notification.getType());
+    
+    //Notification head = queue.peek();
 
     // sonify
-    //if (notification == head) {
-      if (notification != null) {
-        if (notification.ttsText != null) {
-          ttsExamplePlayback(notification.ttsText);
-        } else {
-          try {
-            Thread.sleep(4000);
-          } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-          }
-          //while (isPlaying(notification.soundFile)) {
-          //  try {
-          //    Thread.sleep(4000);
-          //  } catch (InterruptedException e) {
-          //    Thread.currentThread().interrupt();
-          //  }
-          //}
-          ac.out.addInput(notification.soundFile);
-          //notifPlayer = notification.soundFile;
-          play(notification.soundFile);
+    if (notification != null && ((notification.getSoundFile().getEndListener() == null) || (sp.getEndListener() == null))) {
+      if (notification.ttsText != null) {
+        //notifPlayer = getSamplePlayer(ttsMaker.createTTSWavFile(notification.ttsText));
+        ttsExamplePlayback(notification.ttsText);
+      } else if (notification.getSoundFile() != null) {
+        try {
+          Thread.sleep(4000);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
         }
+        ac.out.addInput(notification.getSoundFile());
+        addEndListener(notification.getSoundFile());
+        //notification.soundFile.setKillOnEnd(true);
+        play(notification.soundFile);
       }
-    //}
+    }
   }
 }
 
@@ -511,12 +507,17 @@ void ttsExamplePlayback(String inputSpeech) {
   
   //see helper_functions.pde for actual loading of the WAV file into a SamplePlayer
   
-  SamplePlayer sp = getSamplePlayer(ttsFilePath, true); 
+  //SamplePlayer sp = getSamplePlayer(ttsFilePath, true); 
+  sp = getSamplePlayer(ttsFilePath, true); 
+
   //true means it will delete itself when it is finished playing
   //you may or may not want this behavior!
   
   ac.out.addInput(sp);
   sp.setToLoopStart();
+  addEndListener(sp);
+  println("=== TTS PLAYBLACK HAPPENING ===");
+  //play(sp);
   sp.start();
   println("TTS: " + inputSpeech);
 }

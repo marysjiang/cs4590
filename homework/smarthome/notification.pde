@@ -66,6 +66,7 @@ class Notification {
   public String getFlag() { return flag; }
   public int getPriorityLevel() { return priority; }
   public String getTTSText() { return ttsText; }
+  public SamplePlayer getSoundFile() { return soundFile; }
   
   public String toString() {
       String output = getType().toString() + ": ";

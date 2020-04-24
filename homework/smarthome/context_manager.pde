@@ -15,10 +15,12 @@ abstract class Context {
 class DinnerAtHomeFilter extends Context {
   public void filterMessage(Notification notif) {
     if (notif.getPriorityLevel() == 1) {
-      notif.ttsText = "Message to " + notif.getTag() + " " + notif.getNote();
+      notif.ttsText = "Message to " + notif.getTag() + notif.getNote();
+      notif.soundFile = null;
       queue.add(notif);
     } else if (notif.getPriorityLevel() == 2) {
       notif.soundFile = getSamplePlayer("message.wav");
+      notif.ttsText = null;
       queue.add(notif);
     }
     
@@ -28,10 +30,11 @@ class DinnerAtHomeFilter extends Context {
   public void filterApplianceStateChange(Notification notif) {
     if (notif.getPriorityLevel() == 1) {
       notif.ttsText = notif.getTag() + " has an error " + notif.getNote();
+      notif.soundFile = null;
       queue.add(notif);
     } else if (notif.getPriorityLevel() == 2) {
-      println("ADDING TO QUEUE PRIORITY LEVEL 2");
       notif.soundFile = getSamplePlayer("stove.wav");
+      notif.ttsText = null;
       queue.add(notif);
     }
     
@@ -41,6 +44,7 @@ class DinnerAtHomeFilter extends Context {
   public void filterDoor(Notification notif) {
     if (notif.getPriorityLevel() >= 2) {
       notif.soundFile = getSamplePlayer("door.wav");
+      notif.ttsText = null;
       queue.add(notif);
     }
     
@@ -50,6 +54,7 @@ class DinnerAtHomeFilter extends Context {
   public void filterDelivery(Notification notif) {
     if (notif.getPriorityLevel() == 1) {
       notif.soundFile = getSamplePlayer("doorbell.wav");
+      notif.ttsText = null;
       //notif.ttsText = "Delivery for " + notif.getTag();
       queue.add(notif);
     }
