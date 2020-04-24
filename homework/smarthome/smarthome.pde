@@ -108,7 +108,7 @@ void setup() {
   partyPlayer = getSamplePlayer("party.wav");
   partyPlayer.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
   
-  workAtHomePLayer = getSamplePlayer("work.wav");
+  workAtHomePlayer = getSamplePlayer("work.wav");
   workAtHomePlayer.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
   
   masterGain.addInput(dinnerPlayer);
@@ -384,32 +384,29 @@ void setup() {
 void draw() {
   //this method must be present (even if empty) to process events such as keyPressed()  
   background(1);
-  
-  //SamplePlayer notifPlayer = null;
-  
+    
   if (!queue.isEmpty()) {
     notification = queue.poll();
     
     println("DEQUEUED === " + notification + " TYPE === " + notification.getType());
     
-    //Notification head = queue.peek();
-
-    // sonify
+    // sonify the notification
     if (notification != null && ((notification.getSoundFile().getEndListener() == null) || (sp.getEndListener() == null))) {
-      if (notification.ttsText != null) {
+      if (notification.ttsText != null) { // use text to speech
         try {
           Thread.sleep(4000);
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
         }
+        
         ttsExamplePlayback(notification.ttsText);
-      } else if (notification.getSoundFile() != null) {
+      } else if (notification.getSoundFile() != null) { // play auditory icon or earcon
         try {
           Thread.sleep(2600);
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
         }
-        //ac.out.addInput(notification.getSoundFile());
+        
         masterGain.addInput(notification.getSoundFile());
         play(notification.soundFile);
       }
@@ -422,7 +419,6 @@ void update(int val) {
   String[] locations = new String[]{"Kitchen", "Living Room", "Family Room", "Utility Room", "Garage",
     "Front Porch", "Back Porch", "Master Bath", "Guest Bath", "Master Bedroom", "Kids Bedroom", "Guest Bedroom" };
   
-  // I'm sorry for the ugly code
   String updatedLocations = "Spouse 1 " + locations[(int) spouse1.getValue()] + " Spouse 2 " + locations[(int) spouse2.getValue()]
     + " Kid 1 " + locations[(int) kid1.getValue()] + " Kid 2 " + locations[(int) kid2.getValue()] + " Housekeeper "
     + locations[(int) housekeeper.getValue()] + " Babysitter " + locations[(int) babysitter.getValue()] + " Guest "
@@ -436,8 +432,7 @@ void update(int val) {
 
 // change context
 void context(int val) {
-  // retrieve context type for notification filtering
-  
+  // retrieve context type from radio button for notification filtering
   if (val == 0) {
     queue.clear();
     keyPressed(eventDataJSON1);
@@ -447,12 +442,9 @@ void context(int val) {
     masterGain.addInput(dinnerPlayer);
     play(dinnerPlayer);
   } else if (val == 1) {
-    //SamplePlayer parentsOutPlayer = getSamplePlayer("babysitter.wav");
-    //ac.out.addInput(parentsOutPlayer);
     queue.clear();
     keyPressed(eventDataJSON2);
     contextType = new ParentNightOutFilter();
-    //dinnerPlayer.pause(true);
     masterGain.clearInputConnections();
     masterGain.addInput(parentsOutPlayer);
     play(parentsOutPlayer);
@@ -460,24 +452,24 @@ void context(int val) {
     queue.clear();
     keyPressed(eventDataJSON3);
     contextType = new PartyFilter();
-    //dinnerSound.pause(true);
+    masterGain.clearInputConnections();
+    masterGain.addInput(partyPlayer);
+    play(partyPlayer);
   } else if (val == 3) {
     queue.clear();
     keyPressed(eventDataJSON4);
     contextType = new WorkAtHomeFilter();
-    //dinnerSound.pause(true);
+    masterGain.clearInputConnections();
+    masterGain.addInput(workAtHomePlayer);
+    play(workAtHomePlayer);
   }
-  
-  //println("filter selected " + contextType);
 }
 
 void keyPressed(String eventData) {
   //example of stopping the current event stream and loading the second one
-  //if (key == RETURN || key == ENTER) {
     server.stopEventStream(); //always call this before loading a new stream
     server.loadEventStream(eventData);
     println("**** New event stream loaded: " + eventData + " ****");
-  //}
 }
 
 //in your own custom class, you will implement the NotificationListener interface 
@@ -496,7 +488,6 @@ class Example implements NotificationListener {
     
     // filter notifications by context
     contextType.filterNotification(notification);
-    //println("the context type is " + contextType);
     
     String debugOutput = ">>> ";
     switch (notification.getType()) {
