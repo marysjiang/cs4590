@@ -23,7 +23,7 @@ String eventDataJSON2 = "smarthome_parent_night_out.json";
 String eventDataJSON3 = "smarthome_party.json";
 String eventDataJSON4 = "smarthome_work_at_home.json";
 
-SamplePlayer dinnerSound;
+SamplePlayer bgPlayer;
 SamplePlayer sp;
 
 ControlP5 p5;
@@ -89,8 +89,10 @@ void setup() {
   
   sp = new SamplePlayer(ac, 0);
   
-  dinnerSound = getSamplePlayer("dinner.wav");
-  ac.out.addInput(dinnerSound);
+  bgPlayer = getSamplePlayer("dinner.wav");
+  bgPlayer.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
+  
+  ac.out.addInput(bgPlayer);
   
   spouse1 = p5.addScrollableList("spouse1")
     .setPosition(5, 5)
@@ -383,13 +385,11 @@ void draw() {
         ttsExamplePlayback(notification.ttsText);
       } else if (notification.getSoundFile() != null) {
         try {
-          Thread.sleep(2000);
+          Thread.sleep(4000);
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
         }
         ac.out.addInput(notification.getSoundFile());
-        //addEndListener(notification.getSoundFile());
-        //notification.soundFile.seKillOnEnd(true);
         play(notification.soundFile);
       }
     }
@@ -422,25 +422,25 @@ void context(int val) {
     queue.clear();
     keyPressed(eventDataJSON1);
     contextType = new DinnerAtHomeFilter();
-    play(dinnerSound);
+    play(bgPlayer);
   } else if (val == 1) {
     queue.clear();
     //server.clearListeners();
     keyPressed(eventDataJSON2);
     contextType = new ParentNightOutFilter();
-    dinnerSound.pause(true);
+    //dinnerSound.pause(true);
   } else if (val == 2) {
     queue.clear();
     //server.clearListeners();
     keyPressed(eventDataJSON3);
     contextType = new PartyFilter();
-    dinnerSound.pause(true);
+    //dinnerSound.pause(true);
   } else if (val == 3) {
     queue.clear();
     //server.clearListeners();
     keyPressed(eventDataJSON4);
     contextType = new WorkAtHomeFilter();
-    dinnerSound.pause(true);
+    //dinnerSound.pause(true);
   }
   
   //println("filter selected " + contextType);

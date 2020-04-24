@@ -33,7 +33,7 @@ class DinnerAtHomeFilter extends Context {
       //notif.soundFile = null;
       queue.add(notif);
     } else if (notif.getPriorityLevel() == 2) {
-      notif.soundFile = getSamplePlayer("stove.wav");
+      notif.soundFile = getSamplePlayer("stoveOn.wav");
       notif.ttsText = null;
       queue.add(notif);
     }
@@ -105,7 +105,7 @@ class ParentNightOutFilter extends Context {
       //notif.soundFile = null;
       queue.add(notif);
     } else if (notif.getPriorityLevel() >= 2) {
-      notif.soundFile = getSamplePlayer("stove.wav");
+      notif.soundFile = getSamplePlayer("stoveOn.wav");
       notif.ttsText = null;
       queue.add(notif);
     }
@@ -240,7 +240,6 @@ class WorkAtHomeFilter extends Context {
   public void filterMessage(Notification notif) {
     if (notif.getPriorityLevel() == 1) {
       notif.ttsText = "Message to " + notif.getTag() + notif.getNote().replace(":", "");
-      //notif.soundFile = null;
       queue.add(notif);
     } else if (notif.getPriorityLevel() >= 2) {
       notif.soundFile = getSamplePlayer("message.wav");
@@ -252,12 +251,21 @@ class WorkAtHomeFilter extends Context {
   public void filterApplianceStateChange(Notification notif) {
     if (notif.getPriorityLevel() == 1) {
       notif.ttsText = notif.getTag() + " has an error " + notif.getNote().replace(":", "");
-      //notif.soundFile = null;
       queue.add(notif);
     } else if (notif.getPriorityLevel() >= 2) {
-      notif.soundFile = getSamplePlayer("stove.wav");
-      notif.ttsText = null;
-      queue.add(notif);
+      if (notif.getTag().equals("stove")) {
+        notif.soundFile = getSamplePlayer("stoveOn.wav");
+        notif.ttsText = null;
+        queue.add(notif);
+      } else if (notif.getTag().equals("washing machine")) {
+        notif.soundFile = getSamplePlayer("washer.wav");
+        notif.ttsText = null;
+        queue.add(notif);
+      } else if (notif.getTag().equals("sink")) {
+        notif.soundFile = getSamplePlayer("sink.wav");
+        notif.ttsText = null;
+        queue.add(notif);
+      }
     }
   }
   
@@ -271,7 +279,23 @@ class WorkAtHomeFilter extends Context {
   
   public void filterDelivery(Notification notif) {
     if (notif.getPriorityLevel() == 1) {
-      notif.ttsText = "Delivery at " + notif.getLocation();
+      notif.ttsText = "Delivery for " + notif.getTag() + " on " + notif.getLocation();
+      queue.add(notif);
+    }
+  }
+  
+  public void filterObjectMove(Notification notif) {
+    if (notif.getPriorityLevel() <= 2) {
+      if (notif.getTag().equals("dog") || notif.getTag().equals("cat")) {
+        notif.ttsText = "Pet moving to " + notif.getLocation();
+        queue.add(notif);
+      }
+    }
+  }
+  
+  public void filterPersonMove(Notification notif) {
+    if (notif.getPriorityLevel() <= 2) {
+      notif.ttsText = notif.getTag() + " in " + notif.getLocation();
       queue.add(notif);
     }
   }
@@ -281,20 +305,22 @@ class WorkAtHomeFilter extends Context {
     
     switch (type) {
       case Door:
-        println("door type");
         filterDoor(notif);
         break;
       case ApplianceStateChange:
-        println("appliance type");
         filterApplianceStateChange(notif);
         break;
       case Message:
-        println("message type");
         filterMessage(notif);
         break;
       case PackageDelivery:
-        println("package delivery type");
         filterDelivery(notif);
+        break;
+      case ObjectMove:
+        filterObjectMove(notif);
+        break;
+      case PersonMove:
+        filterPersonMove(notif);
         break;
       default:
         break;
