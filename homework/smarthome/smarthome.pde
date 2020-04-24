@@ -380,10 +380,6 @@ void draw() {
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
         }
-        if (notification.getSoundFile() != null) {
-          ac.out.addInput(notification.getSoundFile());
-          play(notification.soundFile);
-        }
         ttsExamplePlayback(notification.ttsText);
       } else if (notification.getSoundFile() != null) {
         try {
@@ -415,8 +411,6 @@ void update(int val) {
     
   println(updatedLocations);
   ttsExamplePlayback(updatedLocations);
-  //play(catSound);
-  //ttsExamplePlayback(locations[(int) dog.getValue()]);
 }
 
 // change context
@@ -424,18 +418,26 @@ void context(int val) {
   // retrieve context type for notification filtering
   
   if (val == 0) {
+    //server.clearListeners();
+    queue.clear();
     keyPressed(eventDataJSON1);
     contextType = new DinnerAtHomeFilter();
     play(dinnerSound);
   } else if (val == 1) {
+    queue.clear();
+    //server.clearListeners();
     keyPressed(eventDataJSON2);
     contextType = new ParentNightOutFilter();
     dinnerSound.pause(true);
   } else if (val == 2) {
+    queue.clear();
+    //server.clearListeners();
     keyPressed(eventDataJSON3);
     contextType = new PartyFilter();
     dinnerSound.pause(true);
-  } else {
+  } else if (val == 3) {
+    queue.clear();
+    //server.clearListeners();
     keyPressed(eventDataJSON4);
     contextType = new WorkAtHomeFilter();
     dinnerSound.pause(true);

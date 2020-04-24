@@ -53,7 +53,7 @@ class DinnerAtHomeFilter extends Context {
   
   public void filterDelivery(Notification notif) {
     if (notif.getPriorityLevel() == 1) {
-      notif.soundFile = getSamplePlayer("doorbell.wav");
+      //notif.soundFile = getSamplePlayer("doorbell.wav");
       //notif.ttsText = null;
       notif.ttsText = "Delivery for " + notif.getTag();
       queue.add(notif);
@@ -91,37 +91,47 @@ class DinnerAtHomeFilter extends Context {
 class ParentNightOutFilter extends Context {
   public void filterMessage(Notification notif) {
     if (notif.getPriorityLevel() == 1) {
-      notif.ttsText = "Message to " + notif.getTag() + notif.getNote();
+      notif.ttsText = "Message to " + notif.getTag() + notif.getNote().replace(":", "");
+      //notif.soundFile = null;
       queue.add(notif);
-    } else if (notif.getPriorityLevel() <= 2) {
+    } else if (notif.getPriorityLevel() >= 2) {
       notif.soundFile = getSamplePlayer("message.wav");
+      notif.ttsText = null;
       queue.add(notif);
     }
+    
+    println("queue " + queue);
   }
   
   public void filterApplianceStateChange(Notification notif) {
     if (notif.getPriorityLevel() == 1) {
-      notif.ttsText = notif.getTag() + " has an error " + notif.getNote();
+      notif.ttsText = notif.getTag() + " has an error " + notif.getNote().replace(":", "");
+      //notif.soundFile = null;
       queue.add(notif);
-    } else if (notif.getPriorityLevel() <= 2) {
+    } else if (notif.getPriorityLevel() >= 2) {
       notif.soundFile = getSamplePlayer("stove.wav");
+      notif.ttsText = null;
       queue.add(notif);
     }
+    
+    println("queue " + queue);
   }
   
   public void filterDoor(Notification notif) {
-    if (notif.getPriorityLevel() <= 1) {
+    if (notif.getPriorityLevel() >= 1) {
       notif.soundFile = getSamplePlayer("door.wav");
+      notif.ttsText = null;
       queue.add(notif);
     }
   }
   
   public void filterDelivery(Notification notif) {
     if (notif.getPriorityLevel() == 1) {
-      notif.soundFile = getSamplePlayer("doorbell.wav");
-      //notif.ttsText = "Package at the " + notif.getLocation();
+      notif.ttsText = "Delivery at " + notif.getLocation();
       queue.add(notif);
     }
+    
+    println("queue " + queue);
   }
   
   public void filterNotification(Notification notif) {
@@ -131,15 +141,19 @@ class ParentNightOutFilter extends Context {
       case Door:
         println("door type");
         filterDoor(notif);
+        break;
       case ApplianceStateChange:
         println("appliance type");
         filterApplianceStateChange(notif);
+        break;
       case Message:
         println("message type");
         filterMessage(notif);
+        break;
       case PackageDelivery:
         println("package delivery type");
         filterDelivery(notif);
+        break;
       default:
         break;
     }
@@ -182,15 +196,19 @@ class PartyFilter extends Context {
       case Door:
         println("door type");
         filterDoor(notif);
+        break;
       case ApplianceStateChange:
         println("appliance type");
         filterApplianceStateChange(notif);
+        break;
       case Message:
         println("message type");
         filterMessage(notif);
+        break;
       case PackageDelivery:
         println("package delivery type");
         filterDelivery(notif);
+        break;
       default:
         break;
     }
@@ -240,15 +258,19 @@ class WorkAtHomeFilter extends Context {
       case Door:
         println("door type");
         filterDoor(notif);
+        break;
       case ApplianceStateChange:
         println("appliance type");
         filterApplianceStateChange(notif);
+        break;
       case Message:
         println("message type");
         filterMessage(notif);
+        break;
       case PackageDelivery:
         println("package delivery type");
         filterDelivery(notif);
+        break;
       default:
         break;
     }

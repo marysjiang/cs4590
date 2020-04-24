@@ -90,6 +90,15 @@
     "note": ""
   },
   {
+    "type": "Message",
+    "timestamp": 3400,
+    "location": "kitchen",
+    "tag": "spouse_1",
+    "flag": "on",
+    "priority": 2,
+    "note": "Reminder to get eggs."
+  },
+  {
     "type": "ApplianceStateChange",
     "timestamp": 3900,
     "location": "guest bath",
