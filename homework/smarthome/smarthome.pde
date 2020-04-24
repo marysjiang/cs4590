@@ -23,10 +23,17 @@ String eventDataJSON2 = "smarthome_parent_night_out.json";
 String eventDataJSON3 = "smarthome_party.json";
 String eventDataJSON4 = "smarthome_work_at_home.json";
 
-SamplePlayer bgPlayer;
-SamplePlayer sp;
+SamplePlayer dinnerPlayer;
+SamplePlayer parentsOutPlayer;
+SamplePlayer partyPlayer;
+SamplePlayer workAtHomePlayer;
+
+SamplePlayer sp; // tts player
 
 ControlP5 p5;
+
+Gain masterGain;
+Glide masterGainGlide;
 
 RadioButton context;
 //String contextType;
@@ -65,6 +72,9 @@ void setup() {
   
   size(800, 500);
   
+  masterGainGlide = new Glide(ac, 1.0, 100);
+  masterGain = new Gain(ac, 1, masterGainGlide);
+  
   Comparator<Notification> priorityComp = new Comparator<Notification>() {
     public int compare(Notification n1, Notification n2) {
       return min(n1.getPriorityLevel(), n2.getPriorityLevel());
@@ -89,10 +99,20 @@ void setup() {
   
   sp = new SamplePlayer(ac, 0);
   
-  bgPlayer = getSamplePlayer("dinner.wav");
-  bgPlayer.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
+  dinnerPlayer = getSamplePlayer("dinner.wav");
+  dinnerPlayer.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
   
-  ac.out.addInput(bgPlayer);
+  parentsOutPlayer = getSamplePlayer("babysitter.wav");
+  parentsOutPlayer.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
+  
+  partyPlayer = getSamplePlayer("party.wav");
+  partyPlayer.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
+  
+  workAtHomePLayer = getSamplePlayer("work.wav");
+  workAtHomePlayer.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
+  
+  masterGain.addInput(dinnerPlayer);
+  ac.out.addInput(masterGain);
   
   spouse1 = p5.addScrollableList("spouse1")
     .setPosition(5, 5)
@@ -385,11 +405,12 @@ void draw() {
         ttsExamplePlayback(notification.ttsText);
       } else if (notification.getSoundFile() != null) {
         try {
-          Thread.sleep(4000);
+          Thread.sleep(2600);
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
         }
-        ac.out.addInput(notification.getSoundFile());
+        //ac.out.addInput(notification.getSoundFile());
+        masterGain.addInput(notification.getSoundFile());
         play(notification.soundFile);
       }
     }
@@ -418,26 +439,30 @@ void context(int val) {
   // retrieve context type for notification filtering
   
   if (val == 0) {
-    //server.clearListeners();
     queue.clear();
     keyPressed(eventDataJSON1);
     contextType = new DinnerAtHomeFilter();
-    play(bgPlayer);
+    parentsOutPlayer.pause(true);
+    masterGain.clearInputConnections();
+    masterGain.addInput(dinnerPlayer);
+    play(dinnerPlayer);
   } else if (val == 1) {
+    //SamplePlayer parentsOutPlayer = getSamplePlayer("babysitter.wav");
+    //ac.out.addInput(parentsOutPlayer);
     queue.clear();
-    //server.clearListeners();
     keyPressed(eventDataJSON2);
     contextType = new ParentNightOutFilter();
-    //dinnerSound.pause(true);
+    //dinnerPlayer.pause(true);
+    masterGain.clearInputConnections();
+    masterGain.addInput(parentsOutPlayer);
+    play(parentsOutPlayer);
   } else if (val == 2) {
     queue.clear();
-    //server.clearListeners();
     keyPressed(eventDataJSON3);
     contextType = new PartyFilter();
     //dinnerSound.pause(true);
   } else if (val == 3) {
     queue.clear();
-    //server.clearListeners();
     keyPressed(eventDataJSON4);
     contextType = new WorkAtHomeFilter();
     //dinnerSound.pause(true);
