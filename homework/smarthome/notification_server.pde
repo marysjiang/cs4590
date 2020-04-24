@@ -24,7 +24,7 @@ class NotificationServer {
     currentNotifications = this.getNotificationDataFromJSON(loadJSONArray(eventDataJSON));
         
     //Starting the NotificationServer (scheduling tasks) 
-    for (int i = 0; i < currentNotifications.size(); i++) { //<>//
+    for (int i = 0; i < currentNotifications.size(); i++) { //<>// //<>//
       this.scheduleTask(currentNotifications.get(i));
     }
     
