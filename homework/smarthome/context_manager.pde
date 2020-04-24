@@ -1,8 +1,5 @@
 import java.util.*;
 
-double soundLength;
-Bead endListener;
-
 abstract class Context {
   public abstract void filterMessage(Notification notif);
   public abstract void filterApplianceStateChange(Notification notif);

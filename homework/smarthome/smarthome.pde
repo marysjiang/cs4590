@@ -1,7 +1,6 @@
 import beads.*;
 import org.jaudiolibs.beads.*;
 import controlP5.*;
-import java.util.*;
 
 //to use text to speech functionality, copy text_to_speech.pde from this sketch to yours
 //example usage below
@@ -27,6 +26,12 @@ SamplePlayer dinnerPlayer;
 SamplePlayer parentsOutPlayer;
 SamplePlayer partyPlayer;
 SamplePlayer workAtHomePlayer;
+SamplePlayer catPlayer;
+
+boolean updated;
+
+double soundLength;
+Bead endListener;
 
 SamplePlayer sp; // tts player
 
@@ -111,7 +116,14 @@ void setup() {
   workAtHomePlayer = getSamplePlayer("work.wav");
   workAtHomePlayer.setLoopType(SamplePlayer.LoopType.LOOP_FORWARDS);
   
-  masterGain.addInput(dinnerPlayer);
+  catPlayer = getSamplePlayer("cat.wav");
+  masterGain.addInput(catPlayer);
+  catPlayer.pause(true);
+  catPlayer.setKillOnEnd(false);
+  
+  updated = false;
+  
+  //masterGain.addInput(dinnerPlayer);
   ac.out.addInput(masterGain);
   
   spouse1 = p5.addScrollableList("spouse1")
@@ -391,7 +403,7 @@ void draw() {
     println("DEQUEUED === " + notification + " TYPE === " + notification.getType());
     
     // sonify the notification
-    if (notification != null && ((notification.getSoundFile().getEndListener() == null) || (sp.getEndListener() == null))) {
+    if (notification != null && ((notification.getSoundFile().getEndListener() == null) || (sp.getEndListener() == null)) && updated) {
       if (notification.ttsText != null) { // use text to speech
         try {
           Thread.sleep(4000);
@@ -408,7 +420,7 @@ void draw() {
         }
         
         masterGain.addInput(notification.getSoundFile());
-        play(notification.soundFile);
+        play(notification.getSoundFile());
       }
     }
   }
@@ -419,14 +431,17 @@ void update(int val) {
   String[] locations = new String[]{"Kitchen", "Living Room", "Family Room", "Utility Room", "Garage",
     "Front Porch", "Back Porch", "Master Bath", "Guest Bath", "Master Bedroom", "Kids Bedroom", "Guest Bedroom" };
   
-  String updatedLocations = "Spouse 1 " + locations[(int) spouse1.getValue()] + " Spouse 2 " + locations[(int) spouse2.getValue()]
-    + " Kid 1 " + locations[(int) kid1.getValue()] + " Kid 2 " + locations[(int) kid2.getValue()] + " Housekeeper "
-    + locations[(int) housekeeper.getValue()] + " Babysitter " + locations[(int) babysitter.getValue()] + " Guest "
-    + locations[(int) guest.getValue()] + " Car Keys " + locations[(int) carKeys.getValue()] + " Mobile phone "
-    + locations[(int) mobilePhone.getValue()] + " TV Remote " + locations[(int) tvRemote.getValue()] + " Cat "
-    + locations[(int) cat.getValue()] + " Dog " + locations[(int) dog.getValue()];
+  String updatedLocations = " is in " + locations[(int) cat.getValue()] + "Spouse 1 is in " + locations[(int) spouse1.getValue()] 
+    + " Spouse 2 is in " + locations[(int) spouse2.getValue()]
+    + " Kid 1 is in " + locations[(int) kid1.getValue()] + " Kid 2 is in " + locations[(int) kid2.getValue()] + " Housekeeper is in "
+    + locations[(int) housekeeper.getValue()] + " Babysitter is in " + locations[(int) babysitter.getValue()] + " Guest is in "
+    + locations[(int) guest.getValue()] + " Car Keys is in " + locations[(int) carKeys.getValue()] + " Mobile phone is in "
+    + locations[(int) mobilePhone.getValue()] + " TV Remote is in " + locations[(int) tvRemote.getValue()] 
+    + " Dog is in " + locations[(int) dog.getValue()];
     
   println(updatedLocations);
+  
+  catPlayer.start();
   ttsExamplePlayback(updatedLocations);
 }
 
@@ -434,6 +449,7 @@ void update(int val) {
 void context(int val) {
   // retrieve context type from radio button for notification filtering
   if (val == 0) {
+    updated = true;
     queue.clear();
     keyPressed(eventDataJSON1);
     contextType = new DinnerAtHomeFilter();
@@ -442,6 +458,7 @@ void context(int val) {
     masterGain.addInput(dinnerPlayer);
     play(dinnerPlayer);
   } else if (val == 1) {
+    updated = true;
     queue.clear();
     keyPressed(eventDataJSON2);
     contextType = new ParentNightOutFilter();
@@ -449,6 +466,7 @@ void context(int val) {
     masterGain.addInput(parentsOutPlayer);
     play(parentsOutPlayer);
   } else if (val == 2) {
+    updated = true;
     queue.clear();
     keyPressed(eventDataJSON3);
     contextType = new PartyFilter();
@@ -456,6 +474,7 @@ void context(int val) {
     masterGain.addInput(partyPlayer);
     play(partyPlayer);
   } else if (val == 3) {
+    updated = true;
     queue.clear();
     keyPressed(eventDataJSON4);
     contextType = new WorkAtHomeFilter();
