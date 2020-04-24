@@ -42,3 +42,19 @@ public void play(SamplePlayer sp) {
 boolean isPlaying(SamplePlayer sp) {
   return !sp.isPaused();
 }
+
+public void wavePlayer() {
+  Glide sineFundamental = new Glide(ac, 440.0, 200);
+  WavePlayer wp = new WavePlayer(ac, sineFundamental, Buffer.SINE);
+  masterGain.addInput(wp);
+  
+  long time = millis();
+  long end = time + 800;
+  
+  while (true) {
+    if (millis() > end) {
+      masterGain.removeConnection(0, (UGen)wp, 0);
+      break;
+    }
+  }
+}
