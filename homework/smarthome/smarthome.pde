@@ -83,7 +83,6 @@ void setup() {
       SamplePlayer sp = (SamplePlayer) msg;
       sp.pause(true);
       sp.setEndListener(null);
-      //sp = null;
       println("=== END LISTENER DESTROYED ===");
     }
   };
@@ -376,17 +375,25 @@ void draw() {
     // sonify
     if (notification != null && ((notification.getSoundFile().getEndListener() == null) || (sp.getEndListener() == null))) {
       if (notification.ttsText != null) {
-        //notifPlayer = getSamplePlayer(ttsMaker.createTTSWavFile(notification.ttsText));
-        ttsExamplePlayback(notification.ttsText);
-      } else if (notification.getSoundFile() != null) {
         try {
           Thread.sleep(4000);
         } catch (InterruptedException e) {
           Thread.currentThread().interrupt();
         }
+        if (notification.getSoundFile() != null) {
+          ac.out.addInput(notification.getSoundFile());
+          play(notification.soundFile);
+        }
+        ttsExamplePlayback(notification.ttsText);
+      } else if (notification.getSoundFile() != null) {
+        try {
+          Thread.sleep(2000);
+        } catch (InterruptedException e) {
+          Thread.currentThread().interrupt();
+        }
         ac.out.addInput(notification.getSoundFile());
-        addEndListener(notification.getSoundFile());
-        //notification.soundFile.setKillOnEnd(true);
+        //addEndListener(notification.getSoundFile());
+        //notification.soundFile.seKillOnEnd(true);
         play(notification.soundFile);
       }
     }

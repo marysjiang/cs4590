@@ -45,8 +45,17 @@
     "note": "From Spouse 2: On my way home now."
   },
   {
+    "type": "Message",
+    "timestamp": 1400,
+    "location": "",
+    "tag": "spouse_2",
+    "flag": "",
+    "priority": 1,
+    "note": "From Spouse 1: Okay, see you soon."
+  },
+  {
     "type": "ApplianceStateChange",
-    "timestamp": 2300,
+    "timestamp": 5300,
     "location": "guest bath",
     "tag": "lights",
     "flag": "on",
@@ -70,6 +79,15 @@
     "flag": "off",
     "priority": 3,
     "note": ""
+  },
+  {
+    "type": "PackageDelivery",
+    "timestamp": 4400,
+    "location": "front porch",
+    "tag": "spouse_1",
+    "flag": "",
+    "priority": 1,
+    "note": "Prescriptiondirect.com: 90 count Atorvastatin"
   },
   {
     "type": "ApplianceStateChange",

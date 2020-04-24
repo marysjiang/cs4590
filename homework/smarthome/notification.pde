@@ -56,6 +56,8 @@ class Notification {
     
     this.priority = json.getInt("priority");
     //1-3 levels (1 is highest, 3 is lowest)    
+    
+    this.soundFile = new SamplePlayer(ac, 0);
   }
   
   public int getTimestamp() { return timestamp; }
