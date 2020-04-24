@@ -15,7 +15,7 @@ class DinnerAtHomeFilter extends Context {
     if (notif.getPriorityLevel() == 1) {
       notif.ttsText = "Message to " + notif.getTag() + notif.getNote().replace(":", "");
       queue.add(notif);
-    } else if (notif.getPriorityLevel() == 2) {
+    } else if (notif.getPriorityLevel() >= 2) {
       notif.soundFile = getSamplePlayer("message.wav");
       notif.ttsText = null;
       queue.add(notif);
@@ -35,7 +35,7 @@ class DinnerAtHomeFilter extends Context {
   }
   
   public void filterDoor(Notification notif) {
-    if (notif.getPriorityLevel() >= 2) {
+    if (notif.getPriorityLevel() <= 2) {
       notif.soundFile = getSamplePlayer("door.wav");
       notif.ttsText = null;
       queue.add(notif);
